@@ -1,0 +1,8 @@
+#calendar{
+    max-width: 80%  ;
+    margin: auto;
+}
+
+#calendar .fc-day-today{
+    background-color: gainsboro;
+}
