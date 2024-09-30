@@ -17,5 +17,17 @@
 </head>
 <body>
     <div id='calendar'></div>
+    <!-- Модальное окно для создания и редактирования событий -->
+<div id="eventModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Добавить/Редактировать событие</h2>
+      <form id="eventForm">
+        <label for="eventTitle">Название события:</label>
+        <input type="text" id="eventTitle" name="title" required>
+        <button type="submit">Сохранить</button>
+      </form>
+    </div>
+  </div>
 </body>
 </html>
