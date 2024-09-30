@@ -71,42 +71,71 @@ document.addEventListener('DOMContentLoaded', function() {
       calendar.unselect();
     },
 
-    // Обработчик клика по событию для редактирования или удаления
-    eventClick: function(info) {
-      // Всплывающее окно с выбором действия
-      var action = confirm("Нажмите OK, чтобы отредактировать событие, или Отмена для удаления.");
-      
-      if (action) {
-        // Редактирование события
-        var newTitle = prompt('Измените название события:', info.event.title);
-        if (newTitle) {
-          info.event.setProp('title', newTitle); // Редактирование названия
-
-          // Обновляем localStorage
-          var currentEvents = calendar.getEvents().map(event => ({
-            title: event.title,
-            start: event.startStr,
-            end: event.endStr,
-            allDay: event.allDay
-          }));
-          saveEvents(currentEvents);
-        }
-      } else {
-        // Удаление события
-        if (confirm('Вы уверены, что хотите удалить это событие?')) {
-          info.event.remove(); // Удаление события
-
-          // Обновляем localStorage после удаления события
-          var currentEvents = calendar.getEvents().map(event => ({
-            title: event.title,
-            start: event.startStr,
-            end: event.endStr,
-            allDay: event.allDay
-          }));
-          saveEvents(currentEvents);
-
-        }
-      }
+    // Добавляем кастомное контекстное меню для правой кнопки мыши
+    eventDidMount: function(info) {
+      info.el.addEventListener('contextmenu', function(e) {
+        e.preventDefault(); // Предотвращаем стандартное контекстное меню
+        
+        // Создаем пользовательское меню
+        const menu = document.createElement('div');
+        menu.style.position = 'absolute';
+        menu.style.top = `${e.pageY}px`;
+        menu.style.left = `${e.pageX}px`;
+        menu.style.backgroundColor = '#fff';
+        menu.style.border = '1px solid #ccc';
+        menu.style.padding = '10px';
+        menu.style.zIndex = '1000';
+        
+        // Опция "Редактировать"
+        const editOption = document.createElement('div');
+        editOption.textContent = 'Редактировать';
+        editOption.style.cursor = 'pointer';
+        editOption.addEventListener('click', function() {
+          var newTitle = prompt('Измените название события:', info.event.title);
+          if (newTitle) {
+            info.event.setProp('title', newTitle);
+            var currentEvents = calendar.getEvents().map(event => ({
+              title: event.title,
+              start: event.startStr,
+              end: event.endStr,
+              allDay: event.allDay
+            }));
+            saveEvents(currentEvents);
+          }
+          document.body.removeChild(menu); // Удаляем меню
+        });
+        menu.appendChild(editOption);
+        
+        // Опция "Удалить"
+        const deleteOption = document.createElement('div');
+        deleteOption.textContent = 'Удалить';
+        deleteOption.style.cursor = 'pointer';
+        deleteOption.style.marginTop = '5px';
+        deleteOption.addEventListener('click', function() {
+          if (confirm('Вы уверены, что хотите удалить это событие?')) {
+            info.event.remove();
+            var currentEvents = calendar.getEvents().map(event => ({
+              title: event.title,
+              start: event.startStr,
+              end: event.endStr,
+              allDay: event.allDay
+            }));
+            saveEvents(currentEvents);
+          }
+          document.body.removeChild(menu); // Удаляем меню
+        });
+        menu.appendChild(deleteOption);
+        
+        // Добавляем меню на страницу
+        document.body.appendChild(menu);
+        
+        // Закрываем меню при клике в любом другом месте
+        document.addEventListener('click', function() {
+          if (menu) {
+            document.body.removeChild(menu);
+          }
+        }, { once: true });
+      });
     },
 
     
@@ -136,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
         allDay: event.allDay
       }));
       saveEvents(currentEvents);
-      alert('Событие перемещено на: ' + info.event.start.toISOString());
+      //alert('Событие перемещено на: ' + info.event.start.toISOString());
     },
 
     // Настройки времени
