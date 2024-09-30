@@ -1,8 +1,24 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+  }
+
 #calendar{
-    max-width: 80%  ;
+    max-width:   900px;
     margin: auto;
 }
 
-#calendar .fc-day-today{
-    background-color: gainsboro;
+#calendar .fc-today{
+    background-color: #ccc;
+    color:dimgray;
 }
+
+#calendar .fc-day {
+    transition: all 0.5s;
+}
+
+#calendar .fc-day:hover {
+    background-color: #ccc;
+    transition: all 0.5s;
+}
+
