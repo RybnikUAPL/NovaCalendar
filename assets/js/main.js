@@ -89,6 +89,13 @@ document.addEventListener('DOMContentLoaded', function () {
         document.body.removeChild(menu);  // Удаляем меню после добавления
       });
 
+      // Останавливаем распространение события клика для кнопки "Добавить событие"
+      addButton.addEventListener('click', function (event) {
+        event.stopPropagation();
+      });
+
+
+
       // Кнопка "Отмена"
       const cancelButton = document.createElement('button');
       cancelButton.textContent = 'Отмена';
