@@ -49,12 +49,26 @@ document.addEventListener('DOMContentLoaded', function () {
       menu.style.padding = '10px';
       menu.style.zIndex = '1000';
 
-      // Опция "Добавить событие"
-      const addOption = document.createElement('div');
-      addOption.textContent = 'Добавить событие';
-      addOption.style.cursor = 'pointer';
-      addOption.addEventListener('click', function () {
-        var title = prompt('Введите название события:');
+      // Создаем поле ввода для названия события
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = 'Название события';
+      input.style.marginBottom = '10px';
+
+      // Останавливаем распространение события клика, чтобы меню не закрывалось при вводе
+      input.addEventListener('click', function (event) {
+        event.stopPropagation();
+      });
+
+
+
+      // Кнопка "Добавить событие"
+      const addButton = document.createElement('button');
+      addButton.textContent = 'Добавить событие';
+      addButton.style.display = 'block';
+      addButton.style.marginTop = '5px';
+      addButton.addEventListener('click', function () {
+        const title = input.value.trim();
         if (title) {
           var newEvent = {
             title: title,
@@ -75,8 +89,21 @@ document.addEventListener('DOMContentLoaded', function () {
         document.body.removeChild(menu);  // Удаляем меню после добавления
       });
 
-      menu.appendChild(addOption);  // Добавляем пункт "Добавить событие" в меню
+      // Кнопка "Отмена"
+      const cancelButton = document.createElement('button');
+      cancelButton.textContent = 'Отмена';
+      cancelButton.style.display = 'block';
+      cancelButton.style.marginTop = '5px';
+      cancelButton.addEventListener('click', function () {
+        document.body.removeChild(menu);  // Удаляем меню при отмене
+      });
+
+      // Добавляем поле ввода и кнопки в меню
+      menu.appendChild(input);
+      menu.appendChild(addButton);
+      menu.appendChild(cancelButton);
       document.body.appendChild(menu);  // Показываем меню на странице
+
 
       // Закрываем меню при клике в любом другом месте
       document.addEventListener(
