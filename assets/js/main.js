@@ -105,6 +105,13 @@ document.addEventListener('DOMContentLoaded', function () {
         document.body.removeChild(menu);  // Удаляем меню при отмене
       });
 
+      // Останавливаем распространение события клика для кнопки "Отмена"
+      cancelButton.addEventListener('click', function (event) {
+        event.stopPropagation();
+      });
+
+
+
       // Добавляем поле ввода и кнопки в меню
       menu.appendChild(input);
       menu.appendChild(addButton);
@@ -138,12 +145,24 @@ document.addEventListener('DOMContentLoaded', function () {
         menu.style.padding = '10px';
         menu.style.zIndex = '1000';
 
-        // Опция "Редактировать"
-        const editOption = document.createElement('div');
-        editOption.textContent = 'Редактировать';
-        editOption.style.cursor = 'pointer';
-        editOption.addEventListener('click', function () {
-          var newTitle = prompt('Измените название события:', info.event.title);
+        // Поле для редактирования названия события
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = info.event.title;
+        input.style.marginBottom = '10px';
+
+        // Останавливаем распространение события клика, чтобы меню не закрывалось при редактировании
+        input.addEventListener('click', function (event) {
+          event.stopPropagation();
+        });
+
+        // Кнопка "Редактировать"
+        const editButton = document.createElement('button');
+        editButton.textContent = 'Сохранить изменения';
+        editButton.style.display = 'block';
+        editButton.style.marginTop = '5px';
+        editButton.addEventListener('click', function () {
+          const newTitle = input.value.trim();
           if (newTitle) {
             info.event.setProp('title', newTitle);
             var currentEvents = calendar.getEvents().map(event => ({
@@ -156,31 +175,52 @@ document.addEventListener('DOMContentLoaded', function () {
           }
           document.body.removeChild(menu);  // Удаляем меню
         });
-        menu.appendChild(editOption);
 
-        // Опция "Удалить"
-        const deleteOption = document.createElement('div');
-        deleteOption.textContent = 'Удалить';
-        deleteOption.style.cursor = 'pointer';
-        deleteOption.style.marginTop = '5px';
-        deleteOption.addEventListener('click', function () {
-          if (confirm('Вы уверены, что хотите удалить это событие?')) {
-            info.event.remove();
-            var currentEvents = calendar.getEvents().map(event => ({
-              title: event.title,
-              start: event.startStr,
-              end: event.endStr,
-              allDay: event.allDay
-            }));
-            saveEvents(currentEvents);
-          }
+        // Кнопка "Удалить"
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Удалить событие';
+        deleteButton.style.display = 'block';
+        deleteButton.style.marginTop = '5px';
+        deleteButton.addEventListener('click', function () {
+          info.event.remove();
+          var currentEvents = calendar.getEvents().map(event => ({
+            title: event.title,
+            start: event.startStr,
+            end: event.endStr,
+            allDay: event.allDay
+          }));
+          saveEvents(currentEvents);
           document.body.removeChild(menu);  // Удаляем меню
         });
-        menu.appendChild(deleteOption);
 
+        // Кнопка "Отмена"
+        const cancelButton = document.createElement('button');
+        cancelButton.textContent = 'Отмена';
+        cancelButton.style.display = 'block';
+        cancelButton.style.marginTop = '5px';
+        cancelButton.addEventListener('click', function () {
+          document.body.removeChild(menu);  // Удаляем меню при отмене
+        });
+
+        // Останавливаем распространение события клика для кнопок
+        editButton.addEventListener('click', function (event) {
+          event.stopPropagation();
+        });
+        deleteButton.addEventListener('click', function (event) {
+          event.stopPropagation();
+        });
+        cancelButton.addEventListener('click', function (event) {
+          event.stopPropagation();
+        });
+
+        // Добавляем элементы в меню
+        menu.appendChild(input);
+        menu.appendChild(editButton);
+        menu.appendChild(deleteButton);
+        menu.appendChild(cancelButton);
         document.body.appendChild(menu);  // Показываем меню на странице
 
-        // Закрываем меню при клике в любом другом месте
+        // Закрываем меню при клике в любом другом месте, кроме самого меню
         document.addEventListener('click', function () {
           if (menu) {
             document.body.removeChild(menu);
